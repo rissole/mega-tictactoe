@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-import { generateCode } from './util';
-
 import Button from '../../components/Button';
 
 const Section = styled.div`
@@ -28,7 +26,8 @@ export default class RoomPageComponent extends Component {
     };
 
     static propTypes = {
-        joinRoom: PropTypes.func.isRequired
+        joinRoom: PropTypes.func.isRequired,
+        createRoom: PropTypes.func.isRequired
     };
 
     onRoomCodeChange = (event) => {
@@ -38,7 +37,7 @@ export default class RoomPageComponent extends Component {
     }
 
     onCreateRoomClick = () => {
-        this.props.joinRoom(generateCode());
+        this.props.createRoom();
     }
 
     onJoinRoomClick = () => {

@@ -18,7 +18,7 @@ const Header = styled.header`
 `;
 
 const Body = styled.div`
-  padding: 30px;
+  padding: 20px;
   max-width: 720px;
   margin: 0 auto;
 `;

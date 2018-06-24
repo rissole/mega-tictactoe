@@ -12,8 +12,13 @@ export default class GamePageComponent extends Component {
     ),
     playMove: PropTypes.func.isRequired,
     playerMark: PropTypes.oneOf(['x', 'o']).isRequired,
-    restrictedSubgame: PropTypes.number
+    restrictedSubgame: PropTypes.number,
+    setCurrentRoom: PropTypes.func.isRequired
   };
+
+  componentDidMount() {
+      this.props.setCurrentRoom(this.props.roomCode);
+  }
 
   render() {
     const { roomCode, gameState, playMove, playerMark, restrictedSubgame } = this.props;

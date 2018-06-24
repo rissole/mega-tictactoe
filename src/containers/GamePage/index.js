@@ -3,6 +3,7 @@ import { createSelector } from 'reselect';
 import GamePageComponent from './GamePageComponent';
 
 import { playMove } from './redux';
+import { setCurrentRoom } from '../RoomPage/redux';
 
 const gameStateSelector = createSelector(
   (state) => state.game.get('board'),
@@ -17,7 +18,8 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = {
-  playMove
+  playMove,
+  setCurrentRoom
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(GamePageComponent);

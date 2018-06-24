@@ -6,6 +6,8 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 import createSagaMiddleware from 'redux-saga';
 import createReducer from './reducers';
+import rootSaga from './sagas';
+import { root } from 'postcss';
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -38,6 +40,8 @@ export default function configureStore(initialState = {}, history) {
     initialState,
     composeEnhancers(...enhancers),
   );
+
+  sagaMiddleware.run(rootSaga);
 
   // Extensions
   store.runSaga = sagaMiddleware.run;

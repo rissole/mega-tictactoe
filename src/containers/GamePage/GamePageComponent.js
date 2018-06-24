@@ -11,17 +11,21 @@ export default class GamePageComponent extends Component {
         PropTypes.arrayOf(PropTypes.oneOf(['o', 'x']))
     ),
     playMove: PropTypes.func.isRequired,
-    playerMark: PropTypes.oneOf(['x', 'o']).isRequired
+    playerMark: PropTypes.oneOf(['x', 'o']).isRequired,
+    restrictedSubgame: PropTypes.number
   };
 
   render() {
-    const { roomCode, gameState, playMove, playerMark } = this.props;
+    const { roomCode, gameState, playMove, playerMark, restrictedSubgame } = this.props;
 
     return (
       <div>
-        <div>
-            <GameBoard gameState={gameState} playMove={playMove} playerMark={playerMark} />
-        </div>
+        <GameBoard
+            gameState={gameState}
+            playMove={playMove}
+            playerMark={playerMark}
+            restrictedSubgame={restrictedSubgame}
+        />
       </div>
     );
   }

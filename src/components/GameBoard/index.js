@@ -53,11 +53,24 @@ export default class GameBoard extends Component {
             PropTypes.arrayOf(PropTypes.oneOf(['o', 'x']))
         ).isRequired,
         playMove: PropTypes.func.isRequired,
-        playerMark: PropTypes.oneOf(['x', 'o']).isRequired
+        playerMark: PropTypes.oneOf(['x', 'o']).isRequired,
+        restrictedSubgame: PropTypes.number
     }
 
-    render() {
+    _onSquareClick = (subGameIndex, position) => {
         const { gameState, playMove, playerMark } = this.props;
+        const mark = gameState[subGameIndex][position];
+
+        if (mark) {
+            return;
+        }
+
+        playMove(subGameIndex, position, playerMark);
+    };
+
+    render() {
+        const { gameState, restrictedSubgame } = this.props;
+        const isMyTurn = true;
 
         return (
             <GameWrapper>
@@ -65,6 +78,7 @@ export default class GameBoard extends Component {
                     return (
                         <SubGame key={`subgame${subGameIndex}`} borders={BORDER_MAP[subGameIndex]}>
                             {[0,1,2].map((row) => {
+                                const legalClickTarget = !!(isMyTurn && (restrictedSubgame === null || restrictedSubgame === subGameIndex));
                                 return (
                                     <GameRow key={`row${row}`}>
                                         {[0,1,2].map((column) => {
@@ -73,10 +87,10 @@ export default class GameBoard extends Component {
                                               key={`${subGameIndex},${position}`}
                                               borders={BORDER_MAP[position]}
                                               mark={subGame[position]}
-                                              playMove={playMove}
                                               subGameIndex={subGameIndex}
                                               position={position}
-                                              playerMark={playerMark}
+                                              onClick={this._onSquareClick}
+                                              legalClickTarget={legalClickTarget}
                                             />
                                         })}
                                     </GameRow>

@@ -15,11 +15,9 @@ const SquareInternal = styled.div`
         padding: 50% 0
     }
     content: ' ';
-    ${props => !props.mark && `
-        &:hover {
-            background: yellow;
-        }
-    `}
+    &:hover {
+        background: ${props => props.canClick ? 'yellow' : 'none'};
+    }
 
     ${props => props.borders && props.borders.includes('t') && `
         border-top: none;
@@ -44,21 +42,19 @@ export default class Square extends Component {
     static propTypes = {
         borders: PropTypes.arrayOf(PropTypes.oneOf(['t', 'l', 'b', 'r'])),
         mark: PropTypes.oneOf(['x', 'o']),
-        playMove: PropTypes.func.isRequired,
+        onClick: PropTypes.func,
         subGameIndex: PropTypes.number.isRequired,
         position: PropTypes.number.isRequired,
-        playerMark: PropTypes.oneOf(['x', 'o']).isRequired,
+        legalClickTarget: PropTypes.bool.isRequired
     };
+
+    canClick = () => {
+        return (!this.props.mark && this.props.legalClickTarget);
+    }
 
     _onClick = () => {
-        const { mark, playMove, subGameIndex, position, playerMark } = this.props;
-
-        if (mark) {
-            return;
-        }
-
-        playMove(subGameIndex, position, playerMark);
-    };
+        this.canClick() && this.props.onClick(this.props.subGameIndex, this.props.position);
+    }
 
     _renderMark = () => {
         const { mark } = this.props;
@@ -71,7 +67,7 @@ export default class Square extends Component {
     }
 
     render() {
-        return (<SquareInternal onClick={this._onClick}>
+        return (<SquareInternal {...this.props} canClick={this.canClick()} onClick={this._onClick}>
             <MarkWrapper>{this._renderMark()}</MarkWrapper>
         </SquareInternal>);
     }

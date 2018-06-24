@@ -14,17 +14,21 @@ export function playMove(subGameIndex, position, mark) {
 
 // REDUCER
 
-const initialState = fromJS([
-    [], [], [],
-    [], [], [],
-    [], [], []
-]);
+const initialState = fromJS({
+    board: [
+        [], [], [],
+        [], [], [],
+        [], [], []
+    ],
+    restrictedSubgame: null
+});
 
 export function game(state = initialState, action) {
     switch (action.type) {
         case PLAY_MOVE:
             const { subGameIndex, position, mark } = action.payload;
-            return state.setIn([subGameIndex, position], mark);
+            state = state.setIn(['board', subGameIndex, position], mark);
+            return state.set('restrictedSubgame', position);
     }
 
     return state;

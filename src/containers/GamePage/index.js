@@ -2,24 +2,27 @@ import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import GamePageComponent from './GamePageComponent';
 
-import { playMove } from './redux';
+import { playMove, getGameState } from './redux';
 import { setCurrentRoom } from '../RoomPage/redux';
 
-const gameStateSelector = createSelector(
+const boardStateSelector = createSelector(
   (state) => state.game.get('board'),
-  (game) => game.toJS()
+  (board) => board.toJS()
 )
 
 const mapStateToProps = (state, ownProps) => ({
   roomCode: ownProps.match.params.roomCode,
-  gameState: gameStateSelector(state),
+  boardState: boardStateSelector(state),
   playerMark: state.app.playerMark,
-  restrictedSubgame: state.game.get('restrictedSubgame')
+  restrictedSubgame: state.game.get('restrictedSubgame'),
+  isInitialized: state.game.get('isInitialized'),
+  turnPlayer: state.game.get('turnPlayer')
 });
 
 const mapDispatchToProps = {
   playMove,
-  setCurrentRoom
+  setCurrentRoom,
+  getGameState
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(GamePageComponent);

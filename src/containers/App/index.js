@@ -28,7 +28,7 @@ class App extends Component {
     return (
       <div>
         <Header>
-          Mega Tic-Tac-Toe ⭕️
+          Mega Tic-Tac-Toe&nbsp;<span role="img" aria-label="circle">⭕️</span>
         </Header>
         <Body>
           <Switch>

@@ -27,7 +27,7 @@ export function app(state = initialState, action) {
                 playerMark: 'x',
                 roomCode: action.payload
             };
+        default:
+            return state;
     }
-
-    return state;
 }

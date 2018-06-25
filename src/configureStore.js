@@ -7,7 +7,6 @@ import { connectRouter, routerMiddleware } from 'connected-react-router';
 import createSagaMiddleware from 'redux-saga';
 import createReducer from './reducers';
 import rootSaga from './sagas';
-import { root } from 'postcss';
 
 const sagaMiddleware = createSagaMiddleware();
 

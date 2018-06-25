@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import Mark from '../Mark';
 
 const SquareInternal = styled.div`
     display: flex;
@@ -56,19 +57,9 @@ export default class Square extends Component {
         this.canClick() && this.props.onClick(this.props.subGameIndex, this.props.position);
     }
 
-    _renderMark = () => {
-        const { mark } = this.props;
-        if (mark === 'o') {
-            return '⭕️';
-        } else if (mark === 'x') {
-            return '❌';
-        }
-        return null;
-    }
-
     render() {
         return (<SquareInternal {...this.props} canClick={this.canClick()} onClick={this._onClick}>
-            <MarkWrapper>{this._renderMark()}</MarkWrapper>
+            <MarkWrapper><Mark symbol={this.props.mark} /></MarkWrapper>
         </SquareInternal>);
     }
 }

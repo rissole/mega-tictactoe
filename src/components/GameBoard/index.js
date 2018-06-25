@@ -14,6 +14,9 @@ const SubGame = styled.div`
     width: 29%;
     padding: 1%;
     border: 4px solid black;
+    ${props => props.isHighlighted && `
+        background-color: palegoldenrod;
+    `}
 
     ${props => props.borders && props.borders.includes('t') && `
         border-top: none;
@@ -49,17 +52,18 @@ const BORDER_MAP = [
 
 export default class GameBoard extends Component {
     static propTypes = {
-        gameState: PropTypes.arrayOf(
+        boardState: PropTypes.arrayOf(
             PropTypes.arrayOf(PropTypes.oneOf(['o', 'x']))
         ).isRequired,
         playMove: PropTypes.func.isRequired,
         playerMark: PropTypes.oneOf(['x', 'o']).isRequired,
-        restrictedSubgame: PropTypes.number
+        restrictedSubgame: PropTypes.number,
+        disabled: PropTypes.bool
     }
 
     _onSquareClick = (subGameIndex, position) => {
-        const { gameState, playMove, playerMark } = this.props;
-        const mark = gameState[subGameIndex][position];
+        const { boardState, playMove, playerMark } = this.props;
+        const mark = boardState[subGameIndex][position];
 
         if (mark) {
             return;
@@ -69,16 +73,19 @@ export default class GameBoard extends Component {
     };
 
     render() {
-        const { gameState, restrictedSubgame } = this.props;
-        const isMyTurn = true;
+        const { boardState, restrictedSubgame, disabled } = this.props;
 
         return (
             <GameWrapper>
-                {gameState.map((subGame, subGameIndex) => {
+                {boardState.map((subGame, subGameIndex) => {
                     return (
-                        <SubGame key={`subgame${subGameIndex}`} borders={BORDER_MAP[subGameIndex]}>
+                        <SubGame
+                            key={`subgame${subGameIndex}`}
+                            borders={BORDER_MAP[subGameIndex]}
+                            isHighlighted={restrictedSubgame === subGameIndex}
+                        >
                             {[0,1,2].map((row) => {
-                                const legalClickTarget = !!(isMyTurn && (restrictedSubgame === null || restrictedSubgame === subGameIndex));
+                                const legalClickTarget = !disabled && (restrictedSubgame === null || restrictedSubgame === subGameIndex);
                                 return (
                                     <GameRow key={`row${row}`}>
                                         {[0,1,2].map((column) => {

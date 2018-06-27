@@ -9,7 +9,7 @@ export default (props) => (
     <RulesInternal {...props}>
         <h1>Rules</h1>
         <ul>
-            <li>It's regular Tic Tac Toe, but to get your mark in a sqaure, <em>you must win that square's sub-game.</em></li>
+            <li>It's regular Tic Tac Toe, but to get your mark in a square, <em>you must win that square's sub-game.</em></li>
             <li>You must play in the sub-game that maps to the <em>position your opponent played last turn.</em></li>
             <ul>
                 <li>For example, if player one puts an X in the center square of the top-left sub-game, player two <strong>must play in the center sub-game.</strong></li>

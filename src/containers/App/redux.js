@@ -1,9 +1,10 @@
 import { CREATE_ROOM, JOIN_ROOM, SET_CURRENT_ROOM } from '../RoomPage/redux';
+import { GET_GAME_STATE } from '../GamePage/redux';
 
 // REDUCER
 
 const initialState = {
-    playerMark: 'o',
+    playerMark: null,
     roomCode: null
 };
 
@@ -18,7 +19,6 @@ export function app(state = initialState, action) {
         case JOIN_ROOM:
             return {
                 ...state,
-                playerMark: 'o',
                 roomCode: action.payload
             };
         case CREATE_ROOM:
@@ -27,6 +27,11 @@ export function app(state = initialState, action) {
                 playerMark: 'x',
                 roomCode: action.payload
             };
+        case GET_GAME_STATE.SUCCESS:
+            return {
+                ...state,
+                playerMark: action.payload.otherPlayerMark === 'x' ? 'o' : 'x'
+            }
         default:
             return state;
     }

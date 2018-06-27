@@ -1,16 +1,17 @@
 import { fromJS } from 'immutable';
 import { CREATE_ROOM } from '../RoomPage/redux';
-import { put, call, select, take } from 'redux-saga/effects';
+import { put, call, select, take, all, apply, race } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 
 // ACTIONS
 
-const PLAY_MOVE = 'PLAY_MOVE';
-const GET_GAME_STATE = {
+export const PLAY_MOVE = 'PLAY_MOVE';
+export const GET_GAME_STATE = {
     FETCH: 'GET_GAME_STATE.FETCH',
     SUCCESS: 'GET_GAME_STATE.SUCCESS',
     ERROR: 'GET_GAME_STATE.ERROR'
 };
+export const SEND_GAME_STATE = 'SEND_GAME_STATE';
 
 // ACTION CREATORS
 
@@ -24,12 +25,14 @@ export function getGameState(roomCode) {
 
 // SOCKETS
 
-const createWebSocketConnection = () => {
-    const socket = new WebSocket("wss://node2.wsninja.io");
-    socket.addEventListener('open', (event) => {
-        socket.send(JSON.stringify({ guid: '9106602f-555d-4850-8daa-c1079a76693f' }));
+function createWebSocketConnection() {
+    return new Promise(resolve => {
+        const socket = new WebSocket("wss://node2.wsninja.io");
+        socket.addEventListener('open', (event) => {
+            socket.send(JSON.stringify({ guid: '9106602f-555d-4850-8daa-c1079a76693f' }));
+            resolve(socket);
+        });
     });
-    return socket;
 }
 
 const createSocketChannel = (socket) => {
@@ -57,24 +60,63 @@ const createSocketChannel = (socket) => {
 
 // SAGAS
 
-// function* memeActionSaga(socket, roomCode) {
-//     yield apply(socket, socket.send, [
-//         JSON.stringify({roomCode, action: { type: 'MEME_ACTION' }})
-//     ]);
-// }
+// When we see a certain action, what message do we send?
+const createMessageForAction = (state, action) => {
+    if (action.type === PLAY_MOVE && action.payload.mark === state.app.playerMark) {
+        return action;
+    }
+    if (action.type === GET_GAME_STATE.FETCH) {
+        return { type: SEND_GAME_STATE };
+    }
+    if (action.type === SEND_GAME_STATE) {
+        return {
+            type: GET_GAME_STATE.SUCCESS, 
+            payload: {
+                ...state.game.toJS(),
+                otherPlayerMark: state.app.playerMark
+            }
+        }
+    }
+    //return { type: 'UNKNOWN_ACTION', payload: { incomingAction: action, state } };
+};
 
-export function* gamePageWatcherSaga() {
-    const socket = yield call(createWebSocketConnection);
-    const socketChannel = yield call(createSocketChannel, socket);
-
+function* socketListenerSaga(socketChannel) {
     while (true) {
         const payload = yield take(socketChannel);
         const state = yield select();
         const roomCode = state.app.roomCode;
+        console.log('receiving:', payload, {myRoomCode: roomCode});
         if (payload.roomCode === roomCode) {
             yield put(payload.action);
         }
     }
+}
+
+function* socketSpeakerSaga(socket) {
+    while (true) {
+        const action = yield take([PLAY_MOVE, GET_GAME_STATE.FETCH, SEND_GAME_STATE]);
+        const state = yield select();
+        const roomCode = state.app.roomCode;
+        const responseAction = createMessageForAction(state, action);
+        if (responseAction) {
+            console.log('sending:', responseAction);
+            yield apply(socket, socket.send, [
+                JSON.stringify({ roomCode, action: responseAction })
+            ]);
+        }
+    }
+}
+
+export function* gamePageWatcherSaga() {
+    const socket = yield createWebSocketConnection();
+    const socketChannel = yield call(createSocketChannel, socket);
+
+    yield race({
+        task: all([
+            call(socketListenerSaga, socketChannel),
+            call(socketSpeakerSaga, socket)
+        ])
+    });
 }
 
 // REDUCER
@@ -99,7 +141,7 @@ export function game(state = initialState, action) {
     switch (action.type) {
         case PLAY_MOVE:
             const { subGameIndex, position, mark } = action.payload;
-            if (isMoveValid(state, subGameIndex, position, mark)) {    
+            if (isMoveValid(state, subGameIndex, position, mark)) {
                 state = state.setIn(['board', subGameIndex, position], mark);
                 return state.merge({
                     restrictedSubgame: position,
@@ -111,13 +153,13 @@ export function game(state = initialState, action) {
                 return state;
             }
         case CREATE_ROOM:
-            return state.merge({isInitialized: true});
+            return state.merge({ isInitialized: true });
         case GET_GAME_STATE.SUCCESS:
             return state.merge({
                 board: action.payload.board,
                 restrictedSubgame: action.payload.restrictedSubgame,
                 turnPlayer: action.payload.turnPlayer,
-                isInitialized: true
+                isInitialized: true,
             });
         default:
             return state;

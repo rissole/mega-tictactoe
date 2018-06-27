@@ -56,7 +56,7 @@ export default class GameBoard extends Component {
             PropTypes.arrayOf(PropTypes.oneOf(['o', 'x']))
         ).isRequired,
         playMove: PropTypes.func.isRequired,
-        playerMark: PropTypes.oneOf(['x', 'o']).isRequired,
+        playerMark: PropTypes.oneOf(['x', 'o']),
         restrictedSubgame: PropTypes.number,
         disabled: PropTypes.bool
     }

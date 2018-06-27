@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
@@ -11,10 +12,14 @@ const GameStatus = styled.div`
 
 export default class GamePageComponent extends Component {
 
+  state = {
+    hasLoadFailed: false
+  };
+
   static propTypes = {
     roomCode: PropTypes.string.isRequired,
     boardState: PropTypes.arrayOf(
-        PropTypes.arrayOf(PropTypes.oneOf(['o', 'x']))
+      PropTypes.arrayOf(PropTypes.oneOf(['o', 'x']))
     ),
     playMove: PropTypes.func.isRequired,
     playerMark: PropTypes.oneOf(['x', 'o']),
@@ -26,17 +31,48 @@ export default class GamePageComponent extends Component {
   };
 
   componentDidMount() {
-      this.props.setCurrentRoom(this.props.roomCode);
-      this.props.getGameState(this.props.roomCode);
+    this.fetchStateTimeout = null;
+    this._fetchGameInfo(this.props.roomCode);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.roomCode !== nextProps.roomCode) {
+      this._fetchGameInfo(nextProps.roomCode);
+    }
+    if (nextProps.isInitialized) {
+      clearTimeout(this.fetchStateTimeout);
+      this.fetchStateTimeout = null;
+    }
+  }
+
+  _fetchGameInfo = (roomCode) => {
+    if (!this.props.isInitialized && roomCode) {
+      this.props.setCurrentRoom(roomCode);
+      this.props.getGameState(roomCode);
+      this.fetchStateTimeout = setTimeout(this._setLoadFailedState, 5000);
+    }
+  }
+
+  _setLoadFailedState = () => {
+    this.fetchStateTimeout = null;
+    if (!this.props.isInitialized) {
+      this.setState({
+        hasLoadFailed: true
+      });
+    }
   }
 
   _renderStatus() {
     const { playerMark, isInitialized, turnPlayer } = this.props;
     let message = null;
-    if (!isInitialized) {
+    if (this.state.hasLoadFailed) {
+      message = (
+        <span>This room doesn't exist. Go back <Link to="/">home</Link> to create a new one.</span>
+      );
+    } else if (!isInitialized) {
       message = (
         <span>Loading...</span>
-      ); 
+      );
     } else if (turnPlayer !== playerMark) {
       message = (
         <span>Waiting for &nbsp; <Mark symbol={turnPlayer} /></span>
@@ -45,7 +81,7 @@ export default class GamePageComponent extends Component {
       return <GameStatus />;
     }
     return (<GameStatus>
-      { message }
+      {message}
     </GameStatus>);
   }
 

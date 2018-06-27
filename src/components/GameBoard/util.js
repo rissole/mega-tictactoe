@@ -47,5 +47,5 @@ export function findWinner(boardState) {
 }
 
 export function isBoardFull(boardState) {
-    return boardState.every(mark => mark);
+    return boardState.length === 9 && boardState.every(mark => mark);
 }

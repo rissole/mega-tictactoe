@@ -46,13 +46,12 @@ export default class Square extends Component {
         onClick: PropTypes.func,
         subGameIndex: PropTypes.number.isRequired,
         position: PropTypes.number.isRequired,
-        disabled: PropTypes.bool,
-        restrictedSubgame: PropTypes.number
+        disabled: PropTypes.bool
     };
 
     canClick = () => {
-        const { disabled, restrictedSubgame, subGameIndex } = this.props;
-        return (!this.props.mark && !disabled && (restrictedSubgame === null || restrictedSubgame === subGameIndex));
+        const { disabled } = this.props;
+        return (!this.props.mark && !disabled);
     }
 
     _onClick = () => {

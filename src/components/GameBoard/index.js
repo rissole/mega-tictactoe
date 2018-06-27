@@ -32,6 +32,7 @@ export default class GameBoard extends Component {
         return (
             <GameWrapper>
                 {boardState.map((subGame, subGameIndex) => {
+                    const isDisabled = disabled || (restrictedSubgame !== null && restrictedSubgame !== subGameIndex);
                     return (
                         <SubGame
                             key={`subgame${subGameIndex}`}
@@ -39,7 +40,7 @@ export default class GameBoard extends Component {
                             restrictedSubgame={restrictedSubgame}
                             subGameIndex={subGameIndex}
                             boardState={subGame}
-                            disabled={disabled}
+                            disabled={isDisabled}
                             onSquareClick={this._onSquareClick}
                         />
                     )

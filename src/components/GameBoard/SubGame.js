@@ -86,7 +86,6 @@ export default class SubGame extends Component {
                                     position={position}
                                     onClick={this.props.onSquareClick}
                                     disabled={winner || disabled}
-                                    restrictedSubgame={restrictedSubgame}
                                 />
                             })}
                         </SubGameRow>

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { connect } from 'react-redux';
 import { Switch, Route, withRouter } from 'react-router-dom';
 
 import GamePage from '../GamePage';
@@ -43,4 +42,4 @@ class App extends Component {
   }
 }
 
-export default withRouter(connect()(App));
+export default withRouter(App);

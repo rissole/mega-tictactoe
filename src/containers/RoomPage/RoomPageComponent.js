@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import styled from 'styled-components';
-
 import Button from '../../components/Button';
+
 
 const Section = styled.div`
     padding-bottom: 30px;
@@ -27,7 +27,8 @@ export default class RoomPageComponent extends Component {
 
     static propTypes = {
         joinRoom: PropTypes.func.isRequired,
-        createRoom: PropTypes.func.isRequired
+        createRoom: PropTypes.func.isRequired,
+        resetGame: PropTypes.func.isRequired
     };
 
     onRoomCodeChange = (event) => {
@@ -43,6 +44,10 @@ export default class RoomPageComponent extends Component {
     onJoinRoomClick = () => {
         this.props.joinRoom(this.state.roomCode);
     }
+
+    componentDidMount() {
+        this.props.resetGame();
+      }
 
     render() {
         return (

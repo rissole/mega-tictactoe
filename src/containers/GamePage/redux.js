@@ -14,6 +14,7 @@ export const GET_GAME_STATE = {
     ERROR: 'GET_GAME_STATE.ERROR'
 };
 export const SEND_GAME_STATE = 'SEND_GAME_STATE';
+export const RESET_GAME = 'RESET_GAME';
 
 // ACTION CREATORS
 
@@ -23,6 +24,10 @@ export function playMove(subGameIndex, position, mark) {
 
 export function getGameState(roomCode) {
     return { type: GET_GAME_STATE.FETCH, payload: roomCode };
+}
+
+export function resetGame() {
+    return { type: RESET_GAME };
 }
 
 // SOCKETS
@@ -173,6 +178,8 @@ export function game(state = initialState, action) {
                 turnPlayer: action.payload.turnPlayer,
                 isInitialized: true,
             });
+        case RESET_GAME:
+            return initialState;
         default:
             return state;
     }

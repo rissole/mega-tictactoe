@@ -51,7 +51,7 @@ export default class Square extends Component {
     };
 
     canClick = () => {
-        const { disabled, restrictedSubgame, subGameIndex }
+        const { disabled, restrictedSubgame, subGameIndex } = this.props;
         return (!this.props.mark && !disabled && (restrictedSubgame === null || restrictedSubgame === subGameIndex));
     }
 

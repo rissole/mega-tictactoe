@@ -7,8 +7,28 @@ import GameBoard from '../../components/GameBoard';
 import Mark from '../../components/Mark';
 
 const GameStatus = styled.div`
+  display: inline-block;
   padding-bottom: 20px;
   line-height: 1.5;
+`;
+
+const RoomCode = styled.div`
+  display: inline-block;
+  padding-bottom: 20px;
+  line-height: 1.5;
+  font-variant: small-caps;
+  padding-right: 10px;
+  
+  &:before {
+    content: 'room code:';
+    padding-right: 0.5em;
+  }
+`;
+
+const StatusContainer = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
 `;
 
 export default class GamePageComponent extends Component {
@@ -85,12 +105,15 @@ export default class GamePageComponent extends Component {
   }
 
   render() {
-    const { boardState, playMove, playerMark, restrictedSubgame, isInitialized, turnPlayer } = this.props;
+    const { roomCode, boardState, playMove, playerMark, restrictedSubgame, isInitialized, turnPlayer } = this.props;
     const disabled = (!isInitialized || turnPlayer !== playerMark);
 
     return (
       <React.Fragment>
-        {this._renderStatus()}
+        <StatusContainer>
+          {this._renderStatus()}
+          <RoomCode>{roomCode}</RoomCode>
+        </StatusContainer>
         <GameBoard
           disabled={disabled}
           boardState={boardState}

@@ -42,7 +42,7 @@ export default class RoomPageComponent extends Component {
     }
 
     onJoinRoomClick = () => {
-        this.props.joinRoom(this.state.roomCode);
+        this.props.joinRoom(this.state.roomCode.toLowerCase());
     }
 
     componentDidMount() {

@@ -5,6 +5,7 @@ import { Switch, Route, withRouter } from 'react-router-dom';
 
 import GamePage from '../GamePage';
 import RoomPage from '../RoomPage';
+import DaRules from '../../components/DaRules';
 
 const Header = styled.header`
   background-color: #222;
@@ -35,6 +36,7 @@ class App extends Component {
             <Route exact path="/" component={RoomPage} />
             <Route path="/:roomCode" component={GamePage} />
           </Switch>
+          <DaRules />
         </Body>
       </div>
     );

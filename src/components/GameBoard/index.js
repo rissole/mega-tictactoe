@@ -62,13 +62,7 @@ export default class GameBoard extends Component {
     }
 
     _onSquareClick = (subGameIndex, position) => {
-        const { boardState, playMove, playerMark } = this.props;
-        const mark = boardState[subGameIndex][position];
-
-        if (mark) {
-            return;
-        }
-
+        const { playMove, playerMark } = this.props;
         playMove(subGameIndex, position, playerMark);
     };
 
@@ -85,7 +79,6 @@ export default class GameBoard extends Component {
                             isHighlighted={restrictedSubgame === subGameIndex}
                         >
                             {[0,1,2].map((row) => {
-                                const legalClickTarget = !disabled && (restrictedSubgame === null || restrictedSubgame === subGameIndex);
                                 return (
                                     <GameRow key={`row${row}`}>
                                         {[0,1,2].map((column) => {
@@ -97,7 +90,7 @@ export default class GameBoard extends Component {
                                               subGameIndex={subGameIndex}
                                               position={position}
                                               onClick={this._onSquareClick}
-                                              legalClickTarget={legalClickTarget}
+                                              disabled={disabled}
                                             />
                                         })}
                                     </GameRow>

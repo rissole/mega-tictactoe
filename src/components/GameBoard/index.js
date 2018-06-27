@@ -91,6 +91,7 @@ export default class GameBoard extends Component {
                                               position={position}
                                               onClick={this._onSquareClick}
                                               disabled={disabled}
+                                              restrictedSubgame={restrictedSubgame}
                                             />
                                         })}
                                     </GameRow>

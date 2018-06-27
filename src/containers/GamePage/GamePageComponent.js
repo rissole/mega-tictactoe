@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
+import { findWinner, isBoardFull } from '../../components/GameBoard/util';
+
 import GameBoard from '../../components/GameBoard';
 import Mark from '../../components/Mark';
 
@@ -83,7 +85,7 @@ export default class GamePageComponent extends Component {
     }
   }
 
-  _renderStatus() {
+  _renderStatus(gameOverStatus) {
     const { playerMark, isInitialized, turnPlayer } = this.props;
     let message = 'It\'s your move!';
     if (this.state.hasLoadFailed) {
@@ -94,9 +96,17 @@ export default class GamePageComponent extends Component {
       message = (
         <span>Loading...</span>
       );
+    } else if (gameOverStatus === 'x' || gameOverStatus === 'o') {
+      message = (
+        <span>Game over,&nbsp;<Mark symbol={gameOverStatus} />&nbsp;wins!</span>
+      );
+    } else if (gameOverStatus === 'draw') {
+      message = (
+        <span>Game over, draw!</span>
+      );
     } else if (turnPlayer !== playerMark) {
       message = (
-        <span>Waiting for &nbsp; <Mark symbol={turnPlayer} /></span>
+        <span>Waiting for&nbsp;<Mark symbol={turnPlayer} /></span>
       );
     }
     return (<GameStatus>
@@ -106,12 +116,19 @@ export default class GamePageComponent extends Component {
 
   render() {
     const { roomCode, boardState, playMove, playerMark, restrictedSubgame, isInitialized, turnPlayer } = this.props;
-    const disabled = (!isInitialized || turnPlayer !== playerMark);
+    const metaBoardState = boardState.map((subGame) => findWinner(subGame) || isBoardFull(subGame));
+    let gameOverStatus = findWinner(metaBoardState);
+    if (!gameOverStatus) {
+      if (metaBoardState.every(subWinner => subWinner)) {
+        gameOverStatus = 'draw';
+      }
+    }
+    const disabled = (!isInitialized || turnPlayer !== playerMark || gameOverStatus);
 
     return (
       <React.Fragment>
         <StatusContainer>
-          {this._renderStatus()}
+          {this._renderStatus(gameOverStatus)}
           <RoomCode>{roomCode}</RoomCode>
         </StatusContainer>
         <GameBoard

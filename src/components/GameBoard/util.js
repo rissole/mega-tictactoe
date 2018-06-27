@@ -35,7 +35,7 @@ export function findWinner(boardState) {
     let winningMark = null;
     for (let i = 0; i < winStates.length; ++i) {
         const winState = winStates[i];
-        if (boardState[winState[0]] &&
+        if (['x', 'o'].includes(boardState[winState[0]]) &&
             boardState[winState[0]] === boardState[winState[1]] &&
             boardState[winState[0]] === boardState[winState[2]]
         ) {
@@ -44,4 +44,8 @@ export function findWinner(boardState) {
         }
     };
     return winningMark;
+}
+
+export function isBoardFull(boardState) {
+    return boardState.every(mark => mark);
 }

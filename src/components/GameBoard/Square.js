@@ -46,7 +46,8 @@ export default class Square extends Component {
         onClick: PropTypes.func,
         subGameIndex: PropTypes.number.isRequired,
         position: PropTypes.number.isRequired,
-        disabled: PropTypes.bool
+        disabled: PropTypes.bool,
+        restrictedSubgame: PropTypes.number
     };
 
     canClick = () => {

@@ -8,6 +8,7 @@ import Mark from '../../components/Mark';
 
 const GameStatus = styled.div`
   padding-bottom: 20px;
+  line-height: 1.5;
 `;
 
 export default class GamePageComponent extends Component {
@@ -48,8 +49,8 @@ export default class GamePageComponent extends Component {
   _fetchGameInfo = (roomCode) => {
     if (!this.props.isInitialized && roomCode) {
       this.props.setCurrentRoom(roomCode);
-      this.props.getGameState(roomCode);
-      this.fetchStateTimeout = setTimeout(this._setLoadFailedState, 5000);
+      setTimeout(() => this.props.getGameState(roomCode), 2000);
+      this.fetchStateTimeout = setTimeout(this._setLoadFailedState, 7000);
     }
   }
 
@@ -64,7 +65,7 @@ export default class GamePageComponent extends Component {
 
   _renderStatus() {
     const { playerMark, isInitialized, turnPlayer } = this.props;
-    let message = null;
+    let message = 'It\'s your move!';
     if (this.state.hasLoadFailed) {
       message = (
         <span>This room doesn't exist. Go back <Link to="/">home</Link> to create a new one.</span>
@@ -77,8 +78,6 @@ export default class GamePageComponent extends Component {
       message = (
         <span>Waiting for &nbsp; <Mark symbol={turnPlayer} /></span>
       );
-    } else {
-      return <GameStatus />;
     }
     return (<GameStatus>
       {message}

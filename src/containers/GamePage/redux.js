@@ -3,6 +3,8 @@ import { CREATE_ROOM } from '../RoomPage/redux';
 import { put, call, select, take, all, apply, race } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 
+import { findWinner } from '../../components/GameBoard/util';
+
 // ACTIONS
 
 export const PLAY_MOVE = 'PLAY_MOVE';
@@ -133,8 +135,17 @@ const initialState = fromJS({
 });
 
 const isMoveValid = (currentState, subGameIndex, position, mark) => {
-    return mark === currentState.get('turnPlayer')
-        && currentState.getIn(['board', subGameIndex, position], null) === null
+    const valid = mark === currentState.get('turnPlayer')
+        && !currentState.getIn(['board', subGameIndex, position], null);
+    if (!valid) {
+        if (mark !== currentState.get('turnPlayer')) {
+            console.error('invalid move:', mark, 'should be', currentState.get('turnPlayer'));
+        }
+        if (currentState.getIn(['board', subGameIndex, position], null)) {
+            console.error('invalid move:', `[${subGameIndex}, ${position}]`, 'is', currentState.getIn(['board', subGameIndex, position], null));
+        }
+    }
+    return valid;
 }
 
 export function game(state = initialState, action) {
@@ -143,13 +154,14 @@ export function game(state = initialState, action) {
             const { subGameIndex, position, mark } = action.payload;
             if (isMoveValid(state, subGameIndex, position, mark)) {
                 state = state.setIn(['board', subGameIndex, position], mark);
+                const nextSubGame = position;
+                const isNextSubGameWon = !!findWinner(state.getIn(['board', nextSubGame]).toJS());
                 return state.merge({
-                    restrictedSubgame: position,
+                    restrictedSubgame: !isNextSubGameWon ? nextSubGame : null,
                     turnPlayer: mark === 'o' ? 'x' : 'o'
                 });
             } else {
                 // fire an error i guess
-                console.log('illegal move', action.payload);
                 return state;
             }
         case CREATE_ROOM:

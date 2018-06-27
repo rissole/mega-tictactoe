@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
-import createHistory from 'history/createBrowserHistory';
+import createHistory from 'history/createHashHistory';
 import configureStore from './configureStore';
 
 import './index.css';
